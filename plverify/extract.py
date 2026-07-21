@@ -78,6 +78,16 @@ def _guarded(text, m):
     # an operator, close-paren, digit, or unicode numeric (¾) immediately
     # left of the match means we caught the TAIL of a larger expression
     # ("(1/2) 278 + 11", "3 1/2 - 2", "2x - 4 - 4", "¾ x 3/3") -> skip
+    if before == ".":
+        # a period is a sentence boundary ONLY when a letter precedes
+        # it ("eggs. 9 * 2 = 18" — the equation after it is a step).
+        # After a digit it is decimal-ambiguous ("= 9. 9 * 2" could be
+        # "9.9 * 2"), and after a space it may be a leading-dot decimal
+        # (".5*4 = 2" truncating to "5*4 = 2" — a FALSE refutation the
+        # soundness suite caught when this guard was briefly looser).
+        j = i - 1
+        if j >= 0 and text[j].isalpha():
+            before = ""
     if before and (before in "+-*/x×÷()%,.=\u2013\u2014\u2212" or before.isdigit()
                    or (before.isnumeric() and not before.isascii())):
         return True

@@ -131,6 +131,30 @@ check("bench exits 0 and prints the model-column non-claim",
       r.returncode == 0 and "NOT claimed: any model performance"
       in r.stdout)
 
+
+print("\nLEDGER (root claims.py backed by plv_checks.py; every check runs here)")
+import claims as _claims
+import plv_checks as _plv
+for _name, _fn in _plv.CHECKS.items():
+    try:
+        check(_name, _fn() is True)
+    except Exception as _e:
+        check(_name, False, f"{type(_e).__name__}: {_e}")
+_ledgered = {c["check"] for _, cs in _claims.SECTIONS
+             for c in cs if c.get("check")}
+check("ledgered checks == registry (no dangling, no orphans)",
+      _ledgered == set(_plv.CHECKS))
+
+print("""
+NOT claimed: any model performance — the grader grades; the model is
+    out of frame until someone runs one through it.
+NOT claimed: that CERTIFIED means true — it means every extracted step
+    recomputed and the final is produced by a verified computation,
+    under this instrument's stated extraction theta.
+NOT claimed: that abstention is failure — ambiguity is priced as
+    abstention on purpose; coverage is spent to buy zero false
+    refutations.""")
+
 print("\n" + ("BUILD PASSED — sound, calibrated, and honest about it"
               if not fails else f"BUILD FAILED: {fails}"))
 sys.exit(1 if fails else 0)

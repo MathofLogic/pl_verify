@@ -42,6 +42,26 @@ class PLVerifyPipeline:
     def __init__(self, manifest_path="plverify_manifest.json"):
         self.chain = []
         self.manifest_path = manifest_path
+        # THE HISTORY HEARING: an existing manifest must replay by
+        # seal arithmetic before this session appends to it. A broken
+        # history suspends sealing and is preserved as evidence —
+        # writing over it would validate the writer, not the history.
+        self.history_broken = None
+        p = pathlib.Path(manifest_path)
+        if p.exists():
+            try:
+                prior = json.loads(p.read_text())
+            except Exception as e:
+                prior, self.history_broken = None, \
+                    f"manifest unreadable ({type(e).__name__})"
+            if prior is not None:
+                if isinstance(prior, list) and replay(prior):
+                    self.chain = prior
+                else:
+                    self.history_broken = ("existing manifest does not "
+                                           "replay — possible tampering; "
+                                           "file preserved, sealing "
+                                           "suspended")
 
     def __call__(self, solutions, questions=None):
         single = isinstance(solutions, str)
@@ -57,8 +77,13 @@ class PLVerifyPipeline:
                   "n_refuted": v.n_refuted}, self.chain)
             d["seal"] = self.chain[-1]["sha"]
             out.append(d)
-        pathlib.Path(self.manifest_path).write_text(
-            json.dumps(self.chain, indent=1))
+        if self.history_broken:
+            for d in out:
+                d["history_rider"] = self.history_broken
+                d["seal"] = "SUSPENDED"
+        else:
+            pathlib.Path(self.manifest_path).write_text(
+                json.dumps(self.chain, indent=1))
         return out[0] if single else out
 
     def report(self, verdicts):
