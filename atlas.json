@@ -1,6 +1,0 @@
-{
-  "registry": {"import": ["plv_checks"],
-               "attr": "plv_checks:CHECKS"},
-  "mutate": ["plverify/core.py", "plverify/extract.py",
-             "plverify/verify.py", "pipeline.py", "plv_checks.py"]
-}
