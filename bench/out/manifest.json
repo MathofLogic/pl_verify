@@ -1,0 +1,42 @@
+[
+ {
+  "mode": "clean",
+  "n": 250,
+  "CERTIFIED": 233,
+  "REFUTED": 1,
+  "ABSTAIN": 16,
+  "cert_correct": 233,
+  "cert_wrong": 0,
+  "sha_prev": "GENESIS",
+  "sha": "ac89f0ab27c52c4c"
+ },
+ {
+  "mode": "corrupted",
+  "n": 245,
+  "CERTIFIED": 0,
+  "REFUTED": 245,
+  "ABSTAIN": 0,
+  "cert_correct": 0,
+  "cert_wrong": 0,
+  "sha_prev": "ac89f0ab27c52c4c",
+  "sha": "05fe30835d994dc3"
+ },
+ {
+  "mode": "stripped",
+  "n": 250,
+  "CERTIFIED": 187,
+  "REFUTED": 1,
+  "ABSTAIN": 62,
+  "cert_correct": 187,
+  "cert_wrong": 0,
+  "sha_prev": "05fe30835d994dc3",
+  "sha": "1c437265cde1732f"
+ },
+ {
+  "verdict": "PASS/STIPULATED",
+  "soundness_failures": 0,
+  "non_claim": "no model was evaluated; the model column is a declared stub",
+  "sha_prev": "1c437265cde1732f",
+  "sha": "b55d921a3c1d6305"
+ }
+]
